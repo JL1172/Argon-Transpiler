@@ -19,7 +19,7 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token{" +
+        return "\n" + "Token{" +
                 "type=" + this.tokenType +
                 ", value='" + this.tokenValue + '\'' + '}';
     }

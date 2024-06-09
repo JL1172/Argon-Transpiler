@@ -13,8 +13,10 @@ public class Lexer {
             Pattern.compile("const"),
             Pattern.compile("let"),
 
-            //function definition
-            Pattern.compile("@([a-zA-Z_][a-zA-Z0-9_]*)<([^>]+)>\\(\\)"),
+            // function definition
+            Pattern.compile("@([a-zA-Z_][a-zA-Z0-9_]*)<([^>]+)>\\(([^,)]*(?:,[^,)]*)*)\\)"),
+
+            Pattern.compile("function"), 
 
             Pattern.compile("null"),
             Pattern.compile("int"),
@@ -91,7 +93,7 @@ public class Lexer {
                     String value = currenMatcher.group();
                     TokenType type = TokenType.values()[i];
                     tokens.add(new Token(type, value));
-                    currentPosition++;
+                    currentPosition += value.length();
                     match = true;
                     break;
                 }

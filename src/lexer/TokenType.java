@@ -1,12 +1,14 @@
 package lexer;
 
 public enum TokenType {
-    //VAR DECLARATION
+    // VAR DECLARATION
     CONST,
     LET,
 
-    //ATTRIBUTE DEFINITION FOR FUNCTIONS 
+    // ATTRIBUTE DEFINITION FOR FUNCTIONS
     FUNCTION_DEFINITION,
+
+    FUNCTION,
 
     // type names
     NULL_IDENTIFIER,
