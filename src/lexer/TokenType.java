@@ -5,6 +5,9 @@ public enum TokenType {
     CONST,
     LET,
 
+    //ATTRIBUTE DEFINITION FOR FUNCTIONS 
+    FUNCTION_DEFINITION,
+
     // type names
     NULL_IDENTIFIER,
     INTEGER_IDENTIFIER,
