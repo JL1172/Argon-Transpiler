@@ -1,0 +1,6 @@
+
+@sanityFunc<void>(int, str)
+function sanityFunc(age, name) {
+    console.log(age);
+    console.log(name);
+}

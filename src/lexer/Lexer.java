@@ -1,7 +1,11 @@
 package lexer;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lexer {
@@ -69,9 +73,9 @@ public class Lexer {
         Pattern.compile("\\."),
     };
 
-    public List<TokenType> tokenizer(String input) {
+    public List<Token> tokenizer(String input) {
         //init variable
-        ArrayList<Token> tokens = new ArrayList<Token>();
+        List<Token> tokens = new ArrayList<Token>();
         int currentPosition = 0;
         int inputLength = input.length();
         int patterLength = Lexer.PATTERNS.length;
@@ -79,11 +83,41 @@ public class Lexer {
         while (currentPosition < inputLength) {
             boolean match = false;
 
-            // for (int i )
+            for (int i = 0; i < patterLength; i++) {
+                Pattern currentPattern = Lexer.PATTERNS[i];
+                Matcher currentMatch = currentPattern.matcher(input.substring(currentPosition));
+                if (currentMatch.lookingAt()) {
+                    match = true;
+                    String tokenValue = currentMatch.group();
+                    TokenType tokenType = TokenType.values()[i];
+                    tokens.add(new Token(tokenType, tokenValue));
+                    currentPosition += tokenValue.length();
+                    break;
+                }
+            }
+            if (!match) {
+                currentPosition++;
+            }
         }
+        return tokens;
     }
 
+     private static String readSourceCodeFromFile(String filename) {
+        StringBuilder sourceCodeBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sourceCodeBuilder.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sourceCodeBuilder.toString();
+    }
     public static void main(String args[]) {
-        System.out.println("hello world");
+        String sourceCode = readSourceCodeFromFile("/media/jacoblang11/technical/langs/Argon-Transpiler/source-code/source.ar");
+        Lexer lexer = new Lexer();
+        List<Token> tokens = lexer.tokenizer(sourceCode);
+        System.out.println(tokens);
     }
 }

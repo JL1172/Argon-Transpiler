@@ -1,0 +1,17 @@
+{
+  "name": "argon-transpiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "compile": "javac src/lexer/*.java",
+    "read": "cd src && java lexer/Lexer",
+    "java": "npm run compile && npm run read"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
