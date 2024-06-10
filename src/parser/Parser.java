@@ -10,11 +10,12 @@ import javax.swing.text.Style;
 
 import lexer.Token;
 import lexer.TokenType;
+import nodes.FuncDefNode;
 
 public class Parser {
     // meta info
     private Stack stack = new Stack();
-    private HashMap<String, String> functionReferences = new HashMap<>();
+    private List<FuncDefNode> functionReferences = new ArrayList<>();
     private HashMap<String, String> matchingSymbols = new HashMap<>();
     private List<Token> tokens;
     private int currentIdx = 0;
@@ -135,10 +136,7 @@ public class Parser {
             }
             trackIdx++;
         }
-        System.out.println(String.valueOf(funcName));
-        System.out.println(String.valueOf(funcReturnType));
-        System.out.println(String.valueOf(funcParamTypes));
-        
+        this.functionReferences.add(new FuncDefNode(String.valueOf(funcName), String.valueOf(funcReturnType), String.valueOf(funcParamTypes)));
         this.currentIdx++;
         this.expect(TokenType.SEMICOLON);
     }
