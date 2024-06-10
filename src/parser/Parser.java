@@ -3,6 +3,11 @@ package parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.text.Style;
+
 import lexer.Token;
 import lexer.TokenType;
 
@@ -49,7 +54,7 @@ public class Parser {
     }
 
     private void parseStart() {
-        // this will eventually change, this is forcing everything to be functional
+        // todo this will eventually change, this is forcing everything to be functional
         boolean expectFunctionDefinition = this.expect(TokenType.FUNCTION_DEFINITION);
         if (expectFunctionDefinition == true) {
             this.parseFunctionDefinition();
@@ -57,35 +62,85 @@ public class Parser {
     }
 
     private void parseFunctionDefinition() {
+        // first grab current token
         Token token = this.peek();
-        System.out.println(token.getTokenValue());
+        // then initialize funcName
         StringBuilder funcName = new StringBuilder();
-        String funcReturnType;
-        ArrayList<String> funcParamTypes = new ArrayList<>();
+        StringBuilder funcReturnType = new StringBuilder();
+        StringBuilder funcParamTypes = new StringBuilder();
         int len = token.getTokenValue().length();
         String val = token.getTokenValue();
         int trackIdx = 0;
         int step = 0;
         while (trackIdx < len) {
-            //start if that character at start is == @ then increment and if it is but the idx != 0 then throw error because it should only exist once
+            // start if that character at start is == @ then increment and if it is but the
+            // idx != 0 then throw error because it should only exist once
             if (val.charAt(trackIdx) == '@') {
                 if (trackIdx != 0) {
                     this.reportError("Syntax Error For Function Declaration. Unexpected Token: '@' ");
                 }
+                while (val.charAt(trackIdx) != '<') {
+                    funcName.append(val.charAt(trackIdx));
+                    trackIdx++;
+                }
+            }
+            // now if the current char is < start parsing the function return type
+            if (val.charAt(trackIdx) == '<') {
+                if (step != 0) {
+                    this.reportError("Syntax Error For Function Declaration. Unexpected Token: '<' ");
+                }
+                // now increment step to next step
+                step++;
+                trackIdx++;
+                while (val.charAt(trackIdx) != '>') {
+                    Pattern typePattern = Pattern.compile("^[a-z]*$");
+                    Matcher match = typePattern.matcher(String.valueOf(val.charAt(trackIdx)));
+                    if (match.find()) {
+                        funcReturnType.append(String.valueOf(val.charAt(trackIdx)));
+                    } else {
+                        this.reportError("Unexpected Token. Expected Proper Return Type");
+                    }
+                    trackIdx++;
+                }
+            }
+            if (val.charAt(trackIdx) == '>') {
+                if (step != 1) {
+                    this.reportError("Syntax Error For Function Declaration. Unexpected Token: '>' ");
+                }
+                step++;
                 trackIdx++;
             }
-            if (val.charAt(trackIdx) != '<' && step == 0) {
-                funcName.append(val.charAt(trackIdx));
+            if (val.charAt(trackIdx) == '(') {
+                if (step != 2) {
+                    this.reportError("Syntax Error For Function Declaration. Unexpected Token: '(' ");
+                }
                 trackIdx++;
-            } 
-            if (val.charAt(trackIdx) == '<' && step != 0) {
-                this.reportError("Syntax Error For Function Declaration. Unexpected Token: '<' ");
+                step++;
+                while (val.charAt(trackIdx) != ')') {
+                    // todo need to eventually account for multiple param types
+                    Pattern typePattern = Pattern.compile("^[a-z]*$");
+                    Matcher match = typePattern.matcher(String.valueOf(val.charAt(trackIdx)));
+                    if (match.find()) {
+                        funcParamTypes.append(String.valueOf(val.charAt(trackIdx)));
+                    } else {
+                        this.reportError("Unexpected Token. Expected Proper Type");
+                    }
+                    trackIdx++;
+                }
             }
-            if (val.charAt(trackIdx) == '<' && step == 0) {
-                step = 1;
-                this.validatePunctuation(String.valueOf('<'));
+            if (step == 3) {
+               if (val.charAt(trackIdx) != ')') {
+                this.reportError("Syntax Error For Function Declaration. Unexpected Token, Expected ')' ");
+               }
             }
+            trackIdx++;
         }
+        System.out.println(String.valueOf(funcName));
+        System.out.println(String.valueOf(funcReturnType));
+        System.out.println(String.valueOf(funcParamTypes));
+        
+        this.currentIdx++;
+        this.expect(TokenType.SEMICOLON);
     }
 
     private Token peek() {
