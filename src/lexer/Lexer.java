@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import parser.Parser;
+
 public class Lexer {
     public static final Pattern[] PATTERNS = {
             Pattern.compile("const"),
@@ -123,6 +125,7 @@ public class Lexer {
                 "/media/jacoblang11/technical/langs/Argon-Transpiler/source-code/source.ar");
         Lexer lexer = new Lexer();
         List<Token> tokens = lexer.tokenizer(sourceCode);
-        System.out.println(tokens);
+        Parser parser = new Parser(tokens);
+        parser.parseCode();
     }
 }

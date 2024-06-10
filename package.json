@@ -7,9 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "compile": "javac src/lexer/*.java",
+    "compile": "javac src/lexer/*.java src/parser/*.java",
     "read": "cd src && java lexer/Lexer",
-    "java": "npm run compile && npm run read"
+    "java": "cd script && node index.js && npm run compile && npm run read"
   },
   "keywords": [],
   "author": "",
