@@ -55,7 +55,7 @@ public class Parser {
     }
 
     private void parseStart() {
-        // todo this will eventually change, this is forcing everything to be functional
+        // todo this will eventually change, this is forcing everything to be functional this forces everything to start as function. 
         boolean expectFunctionDefinition = this.expect(TokenType.FUNCTION_DEFINITION);
         if (expectFunctionDefinition == true) {
             this.parseFunctionDefinition();
