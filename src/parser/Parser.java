@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import lexer.Token;
@@ -8,6 +9,7 @@ import lexer.TokenType;
 public class Parser {
     // meta info
     private Stack stack = new Stack();
+    private HashMap<String, String> functionReferences = new HashMap<>();
     private HashMap<String, String> matchingSymbols = new HashMap<>();
     private List<Token> tokens;
     private int currentIdx = 0;
@@ -15,6 +17,7 @@ public class Parser {
     public Parser(List<Token> tokens) {
         matchingSymbols.put("}", "{");
         matchingSymbols.put(")", "(");
+        matchingSymbols.put(">", "<");
         this.tokens = tokens;
     }
 
@@ -29,7 +32,7 @@ public class Parser {
     // meta info
 
     private void validatePunctuation(String character) {
-        if (character.equals("{") || character.equals("(")) {
+        if (character.equals("{") || character.equals("(") || character.equals("<")) {
             this.stack.push(character);
         } else {
             String deletedCharacterToCompareTo = this.stack.pop();
@@ -46,7 +49,43 @@ public class Parser {
     }
 
     private void parseStart() {
-        System.out.println(this.tokens.get(currentIdx));
+        // this will eventually change, this is forcing everything to be functional
+        boolean expectFunctionDefinition = this.expect(TokenType.FUNCTION_DEFINITION);
+        if (expectFunctionDefinition == true) {
+            this.parseFunctionDefinition();
+        }
+    }
+
+    private void parseFunctionDefinition() {
+        Token token = this.peek();
+        System.out.println(token.getTokenValue());
+        StringBuilder funcName = new StringBuilder();
+        String funcReturnType;
+        ArrayList<String> funcParamTypes = new ArrayList<>();
+        int len = token.getTokenValue().length();
+        String val = token.getTokenValue();
+        int trackIdx = 0;
+        int step = 0;
+        while (trackIdx < len) {
+            //start if that character at start is == @ then increment and if it is but the idx != 0 then throw error because it should only exist once
+            if (val.charAt(trackIdx) == '@') {
+                if (trackIdx != 0) {
+                    this.reportError("Syntax Error For Function Declaration. Unexpected Token: '@' ");
+                }
+                trackIdx++;
+            }
+            if (val.charAt(trackIdx) != '<' && step == 0) {
+                funcName.append(val.charAt(trackIdx));
+                trackIdx++;
+            } 
+            if (val.charAt(trackIdx) == '<' && step != 0) {
+                this.reportError("Syntax Error For Function Declaration. Unexpected Token: '<' ");
+            }
+            if (val.charAt(trackIdx) == '<' && step == 0) {
+                step = 1;
+                this.validatePunctuation(String.valueOf('<'));
+            }
+        }
     }
 
     private Token peek() {
