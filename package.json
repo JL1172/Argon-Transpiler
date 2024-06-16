@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "compile": "javac src/lexer/*.java src/parser/*.java src/nodes/*.java",
+    "compile": "javac src/lexer/*.java src/parser/*.java src/nodes/functionNodes/*.java",
     "read": "cd src && java lexer/Lexer",
     "java": "cd script && node index.js && npm run compile && npm run read"
   },

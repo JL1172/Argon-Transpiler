@@ -1,4 +1,6 @@
 //todo the way i am going to deal with validating the function definitions is by using a stack, but just implementing with an arraylist
+//todo i could just scan for my syntax instead of parsing everything but that would be too easy
+//todo need to add
 package parser;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.regex.Pattern;
 
 import lexer.Token;
 import lexer.TokenType;
-import nodes.FuncDefNode;
+import nodes.functionNodes.FuncDefNode;
 
 public class Parser {
     // meta info
@@ -52,7 +54,7 @@ public class Parser {
     public void parseCode() {
         this.parseStart();
     }
-    
+
     private void parseStart() {
         // todo this will eventually change, this is forcing everything to be functional
         // this forces everything to start as function.
@@ -60,7 +62,7 @@ public class Parser {
         if (expectFunctionDefinition == true) {
             this.parseFunctionDefinition();
             currentIdx++;
-        } 
+        }
         this.parseFunction();
     }
 
@@ -148,35 +150,42 @@ public class Parser {
         FuncDefToken falseFifthToken = funcDefTokens.get(functionDefinitionIndex);
         if (falseFifthToken.getTokenType() != FuncDefTokenType.LPAREN) {
             this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s",
-            falseFourthToken.getTokenType()));
+                    falseFourthToken.getTokenType()));
         }
         functionDefinitionIndex++;
         currToken = funcDefTokens.get(functionDefinitionIndex);
         while ((currToken.getTokenType() == FuncDefTokenType.BOOL || currToken.getTokenType() == FuncDefTokenType.INT
-        || currToken.getTokenType() == FuncDefTokenType.DOUBLE
-        || currToken.getTokenType() == FuncDefTokenType.STR || currToken.getTokenType() == FuncDefTokenType.NULL
-        || currToken.getTokenType() == FuncDefTokenType.VOID)
-        && functionDefinitionIndex < functionDefinitionTokenListLength) {
+                || currToken.getTokenType() == FuncDefTokenType.DOUBLE
+                || currToken.getTokenType() == FuncDefTokenType.STR || currToken.getTokenType() == FuncDefTokenType.NULL
+                || currToken.getTokenType() == FuncDefTokenType.VOID)
+                && functionDefinitionIndex < functionDefinitionTokenListLength) {
             funcParamTypes.add(currToken.getTokenValue());
             functionDefinitionIndex++;
             currToken = funcDefTokens.get(functionDefinitionIndex);
         }
         FuncDefToken falseSixthToken = funcDefTokens.get(functionDefinitionIndex);
         if (falseSixthToken.getTokenType() != FuncDefTokenType.RPAREN) {
-            this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s", falseSixthToken.getTokenType()));
+            this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s",
+                    falseSixthToken.getTokenType()));
         }
         functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
 
-        
         FuncDefToken falseSeventhToken = funcDefTokens.get(functionDefinitionIndex);
         if (falseSeventhToken.getTokenType() != FuncDefTokenType.RPAREN) {
-            this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s", falseSeventhToken.getTokenType()));
+            this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s",
+                    falseSeventhToken.getTokenType()));
         }
         functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
     }
+
     private void parseFunction() {
         Token currToken = this.peek();
-        System.out.println(currToken);
+        if (currToken.getTokenType() != TokenType.FUNCTION) {
+            this.reportError("Compile Error. This version only supports functional programming. Must define function immediately after function definition.");
+        }
+        currentIdx++;
+        currToken = this.peek();
+        
     }
 
     private Token peek() {

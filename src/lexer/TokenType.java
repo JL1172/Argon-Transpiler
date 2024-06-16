@@ -14,6 +14,7 @@ public enum TokenType {
     NULL_IDENTIFIER,
     INTEGER_IDENTIFIER,
     DOUBLE_IDENTIFIER,
+    BOOL_IDENTIFIER,
     STRING_IDENTIFIER,
 
     // output statement

@@ -1,4 +1,4 @@
-package nodes;
+package nodes.functionNodes;
 
 import java.util.List;
 
