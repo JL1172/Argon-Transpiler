@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.lang.model.type.NullType;
 
@@ -19,6 +22,7 @@ public class Parser {
     // meta info
     private Stack stack = new Stack();
     private List<FuncDefNode> functionReferences = new ArrayList<>();
+    private List<String> functionParameters = new ArrayList<>();
     private HashMap<String, String> matchingSymbols = new HashMap<>();
     private List<Token> tokens;
     private int currentIdx = 0;
@@ -194,64 +198,90 @@ public class Parser {
         this.expect(TokenType.LPAREN);
         currentIdx++;
         currToken = this.peek();
-        //todo this is type parsing, save for later
-        /*
-        // List<String> paramTypes = functionReferences.get(0).getParamType();
-        // int paramTypesLen = paramTypes.size();
-        // int trackerIdx = 0;
-        // System.out.println(currToken);
-        // while (trackerIdx < paramTypesLen) {
-        //     if (paramTypes.get(trackerIdx).equals("int")) {
-        //         try {
-        //             Boolean isInteger = Integer.valueOf(currToken.getTokenValue()) instanceof Integer;
-        //             if (isInteger == false) {
-        //                 this.reportError("Internal Error.");
-        //             }
-        //             trackerIdx++;
-        //         } catch (NumberFormatException e) {
-        //             this.reportError(e.getMessage());
-        //         }
-        //     } else if (paramTypes.get(trackerIdx).equals("bool")) {
-        //         try {
-        //             Boolean isBool = Boolean.valueOf(currToken.getTokenValue()) instanceof Boolean;
-        //             if (isBool == false) {
-        //                 this.reportError("Internal Error.");
-        //             }
-        //             trackerIdx++;
-        //         } catch (NumberFormatException e) {
-        //             this.reportError(e.getMessage());
-        //         }
-        //     } else if (paramTypes.get(trackerIdx).equals("str")) {
-        //         try {
-        //             Boolean isStr = String.valueOf(currToken.getTokenValue()) instanceof String;
-        //             if (isStr == false) {
-        //                 this.reportError("Internal Error.");
-        //             }
-        //             trackerIdx++;
-        //         } catch (NumberFormatException e) {
-        //             this.reportError(e.getMessage());
-        //         }
-        //     } else if (paramTypes.get(trackerIdx).equals("double")) {
-        //         try {
-        //             Boolean isDouble = Double.valueOf(currToken.getTokenValue()) instanceof Double;
-        //             if (isDouble == false) {
-        //                 this.reportError("Internal Error.");
-        //             }
-        //             trackerIdx++;
-        //         } catch (NumberFormatException e) {
-        //             this.reportError(e.getMessage());
-        //         }
-        //     } else if (paramTypes.get(trackerIdx).equals("null")) {
-        //         try {
-        //             trackerIdx++;
-        //         } catch (NumberFormatException e) {
-        //             this.reportError(e.getMessage());
-        //         }
-        //     } else {
-        //         this.reportError(String.format("Error Parsing Type. Type %s Does Not Exist.", paramTypes.get(trackerIdx)));
-        //     }
-        // }
+        int localIdx = 0;
+        //this parses everything in the parameter body correctly
+        while (currToken.getTokenType() != TokenType.RPAREN) {
+            if (localIdx % 2 != 0) {
+                currentIdx++;
+                localIdx++;
+                currToken = this.peek();
+            } else {
+                functionParameters.add(currToken.getTokenValue());
+                currentIdx++;
+                localIdx++;
+                currToken = this.peek();
+            }
+        }
+        this.expect(TokenType.RPAREN);
+        /* 
+        functionParameters = functionParameters.stream().filter(s -> !(s.trim().isEmpty()))
+                .collect(Collectors.toList()); // oneline lol whereas js fp.filter(n => n);
         */
+        System.out.println(functionParameters);
+        // todo this is type parsing, save for later
+        /*
+         * // List<String> paramTypes = functionReferences.get(0).getParamType();
+         * // int paramTypesLen = paramTypes.size();
+         * // int trackerIdx = 0;
+         * // System.out.println(currToken);
+         * // while (trackerIdx < paramTypesLen) {
+         * // if (paramTypes.get(trackerIdx).equals("int")) {
+         * // try {
+         * // Boolean isInteger = Integer.valueOf(currToken.getTokenValue()) instanceof
+         * Integer;
+         * // if (isInteger == false) {
+         * // this.reportError("Internal Error.");
+         * // }
+         * // trackerIdx++;
+         * // } catch (NumberFormatException e) {
+         * // this.reportError(e.getMessage());
+         * // }
+         * // } else if (paramTypes.get(trackerIdx).equals("bool")) {
+         * // try {
+         * // Boolean isBool = Boolean.valueOf(currToken.getTokenValue()) instanceof
+         * Boolean;
+         * // if (isBool == false) {
+         * // this.reportError("Internal Error.");
+         * // }
+         * // trackerIdx++;
+         * // } catch (NumberFormatException e) {
+         * // this.reportError(e.getMessage());
+         * // }
+         * // } else if (paramTypes.get(trackerIdx).equals("str")) {
+         * // try {
+         * // Boolean isStr = String.valueOf(currToken.getTokenValue()) instanceof
+         * String;
+         * // if (isStr == false) {
+         * // this.reportError("Internal Error.");
+         * // }
+         * // trackerIdx++;
+         * // } catch (NumberFormatException e) {
+         * // this.reportError(e.getMessage());
+         * // }
+         * // } else if (paramTypes.get(trackerIdx).equals("double")) {
+         * // try {
+         * // Boolean isDouble = Double.valueOf(currToken.getTokenValue()) instanceof
+         * Double;
+         * // if (isDouble == false) {
+         * // this.reportError("Internal Error.");
+         * // }
+         * // trackerIdx++;
+         * // } catch (NumberFormatException e) {
+         * // this.reportError(e.getMessage());
+         * // }
+         * // } else if (paramTypes.get(trackerIdx).equals("null")) {
+         * // try {
+         * // trackerIdx++;
+         * // } catch (NumberFormatException e) {
+         * // this.reportError(e.getMessage());
+         * // }
+         * // } else {
+         * //
+         * this.reportError(String.format("Error Parsing Type. Type %s Does Not Exist.",
+         * paramTypes.get(trackerIdx)));
+         * // }
+         * // }
+         */
     }
 
     private void parseInteger(String value) {

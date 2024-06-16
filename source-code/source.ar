@@ -1,5 +1,5 @@
 
 @sanityFunc<void | int | bool>(int, str);
-function sanityFunc(1, 10) {
+function sanityFunc(age, name) {
     console.log(age);
 }
