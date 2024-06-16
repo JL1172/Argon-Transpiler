@@ -23,6 +23,8 @@ public class Lexer {
             Pattern.compile("null"),
             Pattern.compile("int"),
             Pattern.compile("double"),
+            Pattern.compile("bool"),
+            
             Pattern.compile("str"),
 
             Pattern.compile("console.log\\((.*?)\\)"),
