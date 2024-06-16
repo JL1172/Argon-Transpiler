@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.lang.model.type.NullType;
+
 import lexer.Token;
 import lexer.TokenType;
 import nodes.functionNodes.FuncDefNode;
@@ -190,41 +192,66 @@ public class Parser {
         currentIdx++;
         currToken = this.peek();
         this.expect(TokenType.LPAREN);
-        List<String> paramTypes = functionReferences.get(0).getParamType();
-        int paramTypesLen = paramTypes.size();
-        int trackerIdx = 0;
-        while (trackerIdx < paramTypesLen) {
-            if (paramTypes.get(trackerIdx) == "int") {
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-            } else if (paramTypes.get(trackerIdx).equals("bool")) {
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-            } else if (paramTypes.get(trackerIdx).equals("str")) {
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-            } else if (paramTypes.get(trackerIdx).equals("double")) {
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-            } else if (paramTypes.get(trackerIdx).equals("null")) {
-                try {
-                } catch (NumberFormatException e) {
-                    this.reportError(e.getMessage());
-                }
-            }
-        }
+        currentIdx++;
+        currToken = this.peek();
+        //todo this is type parsing, save for later
+        /*
+        // List<String> paramTypes = functionReferences.get(0).getParamType();
+        // int paramTypesLen = paramTypes.size();
+        // int trackerIdx = 0;
+        // System.out.println(currToken);
+        // while (trackerIdx < paramTypesLen) {
+        //     if (paramTypes.get(trackerIdx).equals("int")) {
+        //         try {
+        //             Boolean isInteger = Integer.valueOf(currToken.getTokenValue()) instanceof Integer;
+        //             if (isInteger == false) {
+        //                 this.reportError("Internal Error.");
+        //             }
+        //             trackerIdx++;
+        //         } catch (NumberFormatException e) {
+        //             this.reportError(e.getMessage());
+        //         }
+        //     } else if (paramTypes.get(trackerIdx).equals("bool")) {
+        //         try {
+        //             Boolean isBool = Boolean.valueOf(currToken.getTokenValue()) instanceof Boolean;
+        //             if (isBool == false) {
+        //                 this.reportError("Internal Error.");
+        //             }
+        //             trackerIdx++;
+        //         } catch (NumberFormatException e) {
+        //             this.reportError(e.getMessage());
+        //         }
+        //     } else if (paramTypes.get(trackerIdx).equals("str")) {
+        //         try {
+        //             Boolean isStr = String.valueOf(currToken.getTokenValue()) instanceof String;
+        //             if (isStr == false) {
+        //                 this.reportError("Internal Error.");
+        //             }
+        //             trackerIdx++;
+        //         } catch (NumberFormatException e) {
+        //             this.reportError(e.getMessage());
+        //         }
+        //     } else if (paramTypes.get(trackerIdx).equals("double")) {
+        //         try {
+        //             Boolean isDouble = Double.valueOf(currToken.getTokenValue()) instanceof Double;
+        //             if (isDouble == false) {
+        //                 this.reportError("Internal Error.");
+        //             }
+        //             trackerIdx++;
+        //         } catch (NumberFormatException e) {
+        //             this.reportError(e.getMessage());
+        //         }
+        //     } else if (paramTypes.get(trackerIdx).equals("null")) {
+        //         try {
+        //             trackerIdx++;
+        //         } catch (NumberFormatException e) {
+        //             this.reportError(e.getMessage());
+        //         }
+        //     } else {
+        //         this.reportError(String.format("Error Parsing Type. Type %s Does Not Exist.", paramTypes.get(trackerIdx)));
+        //     }
+        // }
+        */
     }
 
     private void parseInteger(String value) {
