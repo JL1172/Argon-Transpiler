@@ -1,3 +1,4 @@
+//todo the way i am going to deal with validating the function definitions is by using a stack, but just implementing with an arraylist
 package parser;
 
 import java.util.ArrayList;
@@ -51,29 +52,27 @@ public class Parser {
     public void parseCode() {
         this.parseStart();
     }
-
+    
     private void parseStart() {
         // todo this will eventually change, this is forcing everything to be functional
         // this forces everything to start as function.
         boolean expectFunctionDefinition = this.expect(TokenType.FUNCTION_DEFINITION);
         if (expectFunctionDefinition == true) {
             this.parseFunctionDefinition();
-        }
-        System.out.println(functionReferences);
+            currentIdx++;
+        } 
+        this.parseFunction();
     }
 
     private void parseFunctionDefinition() {
-        // first grab current token
         Token token = this.peek();
-        // then initialize funcName
         String funcName;
         List<String> funcReturnTypes = new ArrayList<>();
         List<String> funcParamTypes = new ArrayList<>();
 
         Pattern[] functionDefPatterns = {
                 Pattern.compile("@"),
-                // todo this below pattern only supports primitive types, need to eventually
-                // change
+                // todo this below pattern only supports primitive types, need to change
                 Pattern.compile("\\<"),
                 Pattern.compile("str"),
                 Pattern.compile("int"),
@@ -81,21 +80,17 @@ public class Parser {
                 Pattern.compile("bool"),
                 Pattern.compile("null"),
                 Pattern.compile("void"),
-                Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*"), // Identifier,
+                Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*"),
                 Pattern.compile("\\>"),
                 Pattern.compile("\\("),
                 Pattern.compile("\\)"),
                 Pattern.compile("\\;"),
         };
-
-        // first grab val
         String functionDefinition = token.getTokenValue();
-        // initialize tokenization
         int currentPosition = 0;
         int funcDefLength = functionDefinition.length();
         int patternLength = functionDefPatterns.length;
         List<FuncDefToken> funcDefTokens = new ArrayList<>();
-        // System.out.println(functionDefinition);
         while (currentPosition < funcDefLength) {
             boolean match = false;
             for (int i = 0; i < patternLength; i++) {
@@ -116,7 +111,6 @@ public class Parser {
         int functionDefinitionIndex = 0;
         int functionDefinitionTokenListLength = funcDefTokens.size();
         String firstToken = funcDefTokens.get(functionDefinitionIndex).getTokenValue();
-        // System.out.println(funcDefTokens);
         if (!firstToken.equals("@")) {
             this.reportError(String.format("Syntax Error. Expected Token '@' Recieved Token %s.", firstToken));
         }
@@ -171,15 +165,18 @@ public class Parser {
         if (falseSixthToken.getTokenType() != FuncDefTokenType.RPAREN) {
             this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s", falseSixthToken.getTokenType()));
         }
-        // if (falseSeventhToken.getTokenType() != FuncDefTokenType.SEMICOLON) {
-        //     this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s", falseSeventhToken.getTokenType()));
-        // }
-
         functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
-        currentIdx++;
-        if (this.expect(TokenType.SEMICOLON)) {
-            this.reportError("Internal Error.");
+
+        
+        FuncDefToken falseSeventhToken = funcDefTokens.get(functionDefinitionIndex);
+        if (falseSeventhToken.getTokenType() != FuncDefTokenType.RPAREN) {
+            this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s", falseSeventhToken.getTokenType()));
         }
+        functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
+    }
+    private void parseFunction() {
+        Token currToken = this.peek();
+        System.out.println(currToken);
     }
 
     private Token peek() {

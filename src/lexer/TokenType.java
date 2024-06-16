@@ -62,7 +62,6 @@ public enum TokenType {
 
     // punctuation
     SEMICOLON, // ;
-    DOUBLE_COLON, // ::
     COLON, // :
     LPAREN, // (
     RPAREN, // )

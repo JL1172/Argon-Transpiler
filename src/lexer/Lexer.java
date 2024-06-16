@@ -16,7 +16,7 @@ public class Lexer {
             Pattern.compile("let"),
 
             // function definition
-            Pattern.compile("@([a-zA-Z_][a-zA-Z0-9_]*)<([^>]+)>\\(([^,)]*(?:,[^,)]*)*)\\)"),
+            Pattern.compile("@([a-zA-Z_][a-zA-Z0-9_]*)<([^>]+)>\\(([^,)]*(?:,[^,)]*)*)\\)\\;"),
 
             Pattern.compile("function"), 
 
@@ -65,8 +65,7 @@ public class Lexer {
             Pattern.compile(">="), // Greater than or equal to
             Pattern.compile("<="), // Less than or equal to
 
-            Pattern.compile(";"), // Semicolon
-            Pattern.compile("::"), // Double colon
+            Pattern.compile("\\;"), // Semicolon
             Pattern.compile(":"), // Colon
             Pattern.compile("\\("), // Left parenthesis
             Pattern.compile("\\)"), // Right parenthesis
