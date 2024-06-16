@@ -126,6 +126,7 @@ public class Lexer {
                 "/media/jacoblang11/technical/langs/Argon-Transpiler/source-code/source.ar");
         Lexer lexer = new Lexer();
         List<Token> tokens = lexer.tokenizer(sourceCode);
+        System.out.println(tokens);
         Parser parser = new Parser(tokens);
         parser.parseCode();
     }

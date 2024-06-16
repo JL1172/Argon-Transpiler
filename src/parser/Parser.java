@@ -181,11 +181,58 @@ public class Parser {
     private void parseFunction() {
         Token currToken = this.peek();
         if (currToken.getTokenType() != TokenType.FUNCTION) {
-            this.reportError("Compile Error. This version only supports functional programming. Must define function immediately after function definition.");
+            this.reportError(
+                    "Compile Error. This version only supports functional programming. Must define function immediately after function definition.");
         }
         currentIdx++;
         currToken = this.peek();
-        
+        this.expect(TokenType.IDENTIFIER);
+        currentIdx++;
+        currToken = this.peek();
+        this.expect(TokenType.LPAREN);
+        List<String> paramTypes = functionReferences.get(0).getParamType();
+        int paramTypesLen = paramTypes.size();
+        int trackerIdx = 0;
+        while (trackerIdx < paramTypesLen) {
+            if (paramTypes.get(trackerIdx) == "int") {
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+            } else if (paramTypes.get(trackerIdx).equals("bool")) {
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+            } else if (paramTypes.get(trackerIdx).equals("str")) {
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+            } else if (paramTypes.get(trackerIdx).equals("double")) {
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+            } else if (paramTypes.get(trackerIdx).equals("null")) {
+                try {
+                } catch (NumberFormatException e) {
+                    this.reportError(e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void parseInteger(String value) {
+
+    }
+
+    private void parseFunctionDirection() {
+
     }
 
     private Token peek() {

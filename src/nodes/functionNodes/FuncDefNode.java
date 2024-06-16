@@ -15,10 +15,10 @@ public class FuncDefNode {
     public String getId() {
         return this.identifier;
     }
-    public String getReturnType() {
-        return this.funcReturnType.toString();
+    public List<String> getReturnType() {
+        return this.funcReturnType;
     }
-    public String getParamType() {
-        return this.funcParamType.toString();
+    public List<String> getParamType() {
+        return this.funcParamType;
     }
 }

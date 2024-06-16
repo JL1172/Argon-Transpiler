@@ -9,3 +9,7 @@
 4. return statements
 5. primitive data types 
 6. argon specific function definition support 
+
+## ideas
+- parse typescript code for the argon specific typings
+- maybe just create a typescript plugin or addition that ensures static typing and function definitions
