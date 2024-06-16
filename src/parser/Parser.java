@@ -112,6 +112,21 @@ public class Parser {
         }
         int functionDefinitionIndex = 0;
         int functionDefinitionTokenListLength = funcDefTokens.size();
+        String firstToken = funcDefTokens.get(functionDefinitionIndex).getTokenValue();
+        if (!firstToken.equals("@")) {
+            this.reportError(String.format("Syntax Error. Expected Token '@' Recieved Token %s.", firstToken));
+        }
+        functionDefinitionIndex++;
+        FuncDefToken secondToken = funcDefTokens.get(functionDefinitionIndex);
+        if (secondToken.getTokenType() != FuncDefTokenType.FUNC_NAME) {
+            this.reportError(String.format("Syntax Error. Expected Token 'FUNC_NAME' Recieved Token s%", secondToken.getTokenType()));
+        }
+        functionDefinitionIndex++;
+        FuncDefToken thirdToken = funcDefTokens.get(functionDefinitionIndex);
+        if (thirdToken.getTokenType() != FuncDefTokenType.OPEN_CARROT) {
+            this.reportError(String.format("Syntax Error. Expected Token '<' Recieved Token s%", thirdToken.getTokenType()));
+        }
+        functionDefinitionIndex++;
         while (functionDefinitionIndex < functionDefinitionTokenListLength) {
             //now parse those tokens
         }
