@@ -13,4 +13,5 @@ public enum FuncDefTokenType {
     CLOSED_CARROT,
     LPAREN,
     RPAREN,
+    SEMICOLON,
 };

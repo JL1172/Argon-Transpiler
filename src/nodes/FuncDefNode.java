@@ -1,11 +1,13 @@
 package nodes;
 
+import java.util.List;
+
 public class FuncDefNode {
     private String identifier;
-    private String funcReturnType;
-    private String funcParamType;
+    private List<String> funcReturnType;
+    private List<String> funcParamType;
 
-    public FuncDefNode(String id, String frt, String fpt) {
+    public FuncDefNode(String id, List<String> frt, List<String> fpt) {
         this.identifier = id;
         this.funcParamType = fpt;
         this.funcReturnType = frt;
@@ -14,9 +16,9 @@ public class FuncDefNode {
         return this.identifier;
     }
     public String getReturnType() {
-        return this.funcReturnType;
+        return this.funcReturnType.toString();
     }
     public String getParamType() {
-        return this.funcParamType;
+        return this.funcParamType.toString();
     }
 }

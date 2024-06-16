@@ -59,6 +59,7 @@ public class Parser {
         if (expectFunctionDefinition == true) {
             this.parseFunctionDefinition();
         }
+        System.out.println(functionReferences);
     }
 
     private void parseFunctionDefinition() {
@@ -66,8 +67,8 @@ public class Parser {
         Token token = this.peek();
         // then initialize funcName
         String funcName;
-        List<String> funcReturnType = new ArrayList<>();
-        StringBuilder funcParamTypes = new StringBuilder();
+        List<String> funcReturnTypes = new ArrayList<>();
+        List<String> funcParamTypes = new ArrayList<>();
 
         Pattern[] functionDefPatterns = {
                 Pattern.compile("@"),
@@ -84,6 +85,7 @@ public class Parser {
                 Pattern.compile("\\>"),
                 Pattern.compile("\\("),
                 Pattern.compile("\\)"),
+                Pattern.compile("\\;"),
         };
 
         // first grab val
@@ -93,6 +95,7 @@ public class Parser {
         int funcDefLength = functionDefinition.length();
         int patternLength = functionDefPatterns.length;
         List<FuncDefToken> funcDefTokens = new ArrayList<>();
+        // System.out.println(functionDefinition);
         while (currentPosition < funcDefLength) {
             boolean match = false;
             for (int i = 0; i < patternLength; i++) {
@@ -113,7 +116,7 @@ public class Parser {
         int functionDefinitionIndex = 0;
         int functionDefinitionTokenListLength = funcDefTokens.size();
         String firstToken = funcDefTokens.get(functionDefinitionIndex).getTokenValue();
-       
+        // System.out.println(funcDefTokens);
         if (!firstToken.equals("@")) {
             this.reportError(String.format("Syntax Error. Expected Token '@' Recieved Token %s.", firstToken));
         }
@@ -138,90 +141,45 @@ public class Parser {
                 || currToken.getTokenType() == FuncDefTokenType.STR || currToken.getTokenType() == FuncDefTokenType.NULL
                 || currToken.getTokenType() == FuncDefTokenType.VOID)
                 && functionDefinitionIndex < functionDefinitionTokenListLength) {
-            funcReturnType.add(currToken.getTokenValue());
+            funcReturnTypes.add(currToken.getTokenValue());
             functionDefinitionIndex++;
             currToken = funcDefTokens.get(functionDefinitionIndex);
         }
-        System.out.print(funcDefTokens.get(functionDefinitionIndex));
+        FuncDefToken falseFourthToken = funcDefTokens.get(functionDefinitionIndex);
+        if (falseFourthToken.getTokenType() != FuncDefTokenType.CLOSED_CARROT) {
+            this.reportError(String.format("Syntax Error. Expected Token '>' Recieved Token %s",
+                    falseFourthToken.getTokenType()));
+        }
+        functionDefinitionIndex++;
+        FuncDefToken falseFifthToken = funcDefTokens.get(functionDefinitionIndex);
+        if (falseFifthToken.getTokenType() != FuncDefTokenType.LPAREN) {
+            this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s",
+            falseFourthToken.getTokenType()));
+        }
+        functionDefinitionIndex++;
+        currToken = funcDefTokens.get(functionDefinitionIndex);
+        while ((currToken.getTokenType() == FuncDefTokenType.BOOL || currToken.getTokenType() == FuncDefTokenType.INT
+        || currToken.getTokenType() == FuncDefTokenType.DOUBLE
+        || currToken.getTokenType() == FuncDefTokenType.STR || currToken.getTokenType() == FuncDefTokenType.NULL
+        || currToken.getTokenType() == FuncDefTokenType.VOID)
+        && functionDefinitionIndex < functionDefinitionTokenListLength) {
+            funcParamTypes.add(currToken.getTokenValue());
+            functionDefinitionIndex++;
+            currToken = funcDefTokens.get(functionDefinitionIndex);
+        }
+        FuncDefToken falseSixthToken = funcDefTokens.get(functionDefinitionIndex);
+        if (falseSixthToken.getTokenType() != FuncDefTokenType.RPAREN) {
+            this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s", falseSixthToken.getTokenType()));
+        }
+        // if (falseSeventhToken.getTokenType() != FuncDefTokenType.SEMICOLON) {
+        //     this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s", falseSeventhToken.getTokenType()));
+        // }
 
-        // int len = token.getTokenValue().length();
-        // String val = token.getTokenValue();
-        // int trackIdx = 0;
-        // int step = 0;
-        // while (trackIdx < len) {
-        // // start if that character at start is == @ then increment and if it is but
-        // the
-        // // idx != 0 then throw error because it should only exist once
-        // if (val.charAt(trackIdx) == '@') {
-        // if (trackIdx != 0) {
-        // this.reportError("Syntax Error For Function Declaration. Unexpected Token:
-        // '@' ");
-        // }
-        // while (val.charAt(trackIdx) != '<') {
-        // funcName.append(val.charAt(trackIdx));
-        // trackIdx++;
-        // }
-        // }
-        // // now if the current char is < start parsing the function return type
-        // if (val.charAt(trackIdx) == '<') {
-        // if (step != 0) {
-        // this.reportError("Syntax Error For Function Declaration. Unexpected Token:
-        // '<' ");
-        // }
-        // // now increment step to next step
-        // step++;
-        // trackIdx++;
-        // while (val.charAt(trackIdx) != '>') {
-        // Pattern typePattern = Pattern.compile("^[a-z]*$");
-        // Matcher match = typePattern.matcher(String.valueOf(val.charAt(trackIdx)));
-        // if (match.find()) {
-        // funcReturnType.append(String.valueOf(val.charAt(trackIdx)));
-        // } else {
-        // this.reportError("Unexpected Token. Expected Proper Return Type");
-        // }
-        // trackIdx++;
-        // }
-        // }
-        // if (val.charAt(trackIdx) == '>') {
-        // if (step != 1) {
-        // this.reportError("Syntax Error For Function Declaration. Unexpected Token:
-        // '>' ");
-        // }
-        // step++;
-        // trackIdx++;
-        // }
-        // if (val.charAt(trackIdx) == '(') {
-        // if (step != 2) {
-        // this.reportError("Syntax Error For Function Declaration. Unexpected Token:
-        // '(' ");
-        // }
-        // trackIdx++;
-        // step++;
-        // while (val.charAt(trackIdx) != ')') {
-        // // todo need to eventually account for multiple param types
-        // Pattern typePattern = Pattern.compile("^[a-z]*$");
-        // Matcher match = typePattern.matcher(String.valueOf(val.charAt(trackIdx)));
-        // if (match.find()) {
-        // funcParamTypes.append(String.valueOf(val.charAt(trackIdx)));
-        // } else {
-        // this.reportError("Unexpected Token. Expected Proper Type");
-        // }
-        // trackIdx++;
-        // }
-        // }
-        // if (step == 3) {
-        // if (val.charAt(trackIdx) != ')') {
-        // this.reportError("Syntax Error For Function Declaration. Unexpected Token,
-        // Expected ')' ");
-        // }
-        // }
-        // trackIdx++;
-        // }
-        // this.functionReferences.add(new FuncDefNode(String.valueOf(funcName),
-        // String.valueOf(funcReturnType), String.valueOf(funcParamTypes)));
-        // this.currentIdx++;
-        // this.expect(TokenType.SEMICOLON);
-
+        functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
+        currentIdx++;
+        if (this.expect(TokenType.SEMICOLON)) {
+            this.reportError("Internal Error.");
+        }
     }
 
     private Token peek() {
