@@ -2,7 +2,6 @@ package parser;
 
 public enum FuncDefTokenType {
     AT_SIGN,
-    FUNC_NAME,
     OPEN_CARROT,
     STR,
     INT,
@@ -10,6 +9,7 @@ public enum FuncDefTokenType {
     BOOL,
     NULL,
     VOID,
+    FUNC_NAME,
     CLOSED_CARROT,
     LPAREN,
     RPAREN,

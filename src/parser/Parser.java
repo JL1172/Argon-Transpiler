@@ -65,13 +65,12 @@ public class Parser {
         // first grab current token
         Token token = this.peek();
         // then initialize funcName
-        StringBuilder funcName = new StringBuilder();
-        StringBuilder funcReturnType = new StringBuilder();
+        String funcName;
+        List<String> funcReturnType = new ArrayList<>();
         StringBuilder funcParamTypes = new StringBuilder();
 
         Pattern[] functionDefPatterns = {
                 Pattern.compile("@"),
-                Pattern.compile("^[A-Za-z]*$"),
                 // todo this below pattern only supports primitive types, need to eventually
                 // change
                 Pattern.compile("\\<"),
@@ -81,6 +80,7 @@ public class Parser {
                 Pattern.compile("bool"),
                 Pattern.compile("null"),
                 Pattern.compile("void"),
+                Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*"), // Identifier,
                 Pattern.compile("\\>"),
                 Pattern.compile("\\("),
                 Pattern.compile("\\)"),
@@ -113,23 +113,37 @@ public class Parser {
         int functionDefinitionIndex = 0;
         int functionDefinitionTokenListLength = funcDefTokens.size();
         String firstToken = funcDefTokens.get(functionDefinitionIndex).getTokenValue();
+       
         if (!firstToken.equals("@")) {
             this.reportError(String.format("Syntax Error. Expected Token '@' Recieved Token %s.", firstToken));
         }
         functionDefinitionIndex++;
         FuncDefToken secondToken = funcDefTokens.get(functionDefinitionIndex);
         if (secondToken.getTokenType() != FuncDefTokenType.FUNC_NAME) {
-            this.reportError(String.format("Syntax Error. Expected Token 'FUNC_NAME' Recieved Token s%", secondToken.getTokenType()));
+            this.reportError(String.format("Syntax Error. Expected Token 'FUNC_NAME' Recieved Token %s",
+                    secondToken.getTokenType()));
         }
+        funcName = funcDefTokens.get(functionDefinitionIndex).getTokenValue();
         functionDefinitionIndex++;
         FuncDefToken thirdToken = funcDefTokens.get(functionDefinitionIndex);
         if (thirdToken.getTokenType() != FuncDefTokenType.OPEN_CARROT) {
-            this.reportError(String.format("Syntax Error. Expected Token '<' Recieved Token s%", thirdToken.getTokenType()));
+            this.reportError(
+                    String.format("Syntax Error. Expected Token '<' Recieved Token %s", thirdToken.getTokenType()));
         }
         functionDefinitionIndex++;
-        while (functionDefinitionIndex < functionDefinitionTokenListLength) {
-            //now parse those tokens
+        // todo eventually need to parse "|" for union types
+        FuncDefToken currToken = funcDefTokens.get(functionDefinitionIndex);
+        while ((currToken.getTokenType() == FuncDefTokenType.BOOL || currToken.getTokenType() == FuncDefTokenType.INT
+                || currToken.getTokenType() == FuncDefTokenType.DOUBLE
+                || currToken.getTokenType() == FuncDefTokenType.STR || currToken.getTokenType() == FuncDefTokenType.NULL
+                || currToken.getTokenType() == FuncDefTokenType.VOID)
+                && functionDefinitionIndex < functionDefinitionTokenListLength) {
+            funcReturnType.add(currToken.getTokenValue());
+            functionDefinitionIndex++;
+            currToken = funcDefTokens.get(functionDefinitionIndex);
         }
+        System.out.print(funcDefTokens.get(functionDefinitionIndex));
+
         // int len = token.getTokenValue().length();
         // String val = token.getTokenValue();
         // int trackIdx = 0;
