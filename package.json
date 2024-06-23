@@ -9,9 +9,15 @@
   "scripts": {
     "compile": "javac src/lexer/*.java src/parser/*.java src/nodes/functionNodes/*.java",
     "read": "cd src && java lexer/Lexer",
-    "java": "cd script && node index.js && npm run compile && npm run read"
+    "java": "cd script && node index.js && npm run compile && npm run read",
+    "js": "cd source-code && npx ts-node source.ts"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  }
 }
