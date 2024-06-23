@@ -12,7 +12,8 @@
     "read": "cd src && java lexer/Lexer",
     "java": "cd script && node index.js && npm run compile && npm run read",
     "t": "cd src.v3 && npx tsc index.ts",
-    "js": "npm run t && cd source-code && node source.js",
+    "clear": "cd script && node index.js",
+    "js": "npm run clear && npm run t && cd source-code && node source.js",
     "ts": "cd source-code && node source.ts"
   },
   "keywords": [],

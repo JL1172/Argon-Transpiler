@@ -19,27 +19,63 @@ var Schema = /** @class */ (function () {
             required: "boolean",
             string: "boolean",
             boolean: "boolean",
-            number: "bool,ean",
+            number: "boolean",
             number_string: "boolean",
             min: "number",
             max: "number",
             password: "boolean",
             email: "boolean",
         };
+        //validates no keys outside of options type allowed keys exist
         for (var field_key in schema) {
             var first_key = field_key;
             var rules = schema[first_key];
             for (var key in rules) {
                 if (!(key in allowed_keys)) {
-                    this.report_error("Schema Build Error: Property: ".concat(key, " is illegal option for schema build."));
+                    this.report_error("Schema Build Error: Property ".concat(key, " is illegal option for schema build."));
                 }
             }
         }
+        //validates no keys in options are assigned the wrong type.
         for (var field_key in schema) {
             var rules = schema[field_key];
             for (var key in rules) {
                 if (typeof rules[key] !== allowed_keys[key]) {
-                    this.report_error("Schema Build Error: Property: ".concat(key, " expected type ").concat(allowed_keys[key], " and recieved ").concat(typeof rules[key]));
+                    this.report_error("Schema Build Error: Property ".concat(key, " expected type: ").concat(allowed_keys[key], " and recieved type: ").concat(typeof rules[key]));
+                }
+            }
+        }
+        //validates illogical schema's are not created (multiple types, higher min than max);
+        var isTypeAssigned = 0;
+        for (var field_key in schema) {
+            var rules = schema[field_key];
+            for (var key in rules) {
+                if (key !== "required" && key !== "min" && key !== "max") {
+                    if (rules[key] === true && isTypeAssigned === 0) {
+                        isTypeAssigned++;
+                    }
+                    else if (rules[key] === true && isTypeAssigned > 0) {
+                        this.report_error("Schema Build Error: Cannot assign multiple types. Re-read code and validate only one type per field is assigned.");
+                    }
+                }
+                else {
+                    if ("min" in rules && "max" in rules) {
+                        var minV = rules["min"];
+                        var maxV = rules["max"];
+                        if (minV > maxV) {
+                            this.report_error("Schema Build Error: Illogical min and max constraints applied.");
+                        }
+                    }
+                    else if ("min" in rules) {
+                        if (rules["min"] < 0) {
+                            this.report_error("Schema Build Error: Illogical min constraint applied.");
+                        }
+                    }
+                    else if ("max" in rules) {
+                        if (rules["max"] === Infinity) {
+                            this.report_error("Schema Build Error: Illogical max constraint applied.");
+                        }
+                    }
                 }
             }
         }

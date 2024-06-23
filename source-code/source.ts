@@ -2,5 +2,5 @@
 import { Schema } from "../src.v3/index";
 
 const schema = new Schema();
-schema.build({first_name: {string: true, required: true}});
+schema.build({ first_name: { string: true, required: true, boolean: true } });
 console.log(schema.read_schema());

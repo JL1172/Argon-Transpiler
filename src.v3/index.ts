@@ -24,31 +24,73 @@ export class Schema {
       required: "boolean",
       string: "boolean",
       boolean: "boolean",
-      number: "bool,ean",
+      number: "boolean",
       number_string: "boolean",
       min: "number",
       max: "number",
       password: "boolean",
       email: "boolean",
     };
+    //validates no keys outside of options type allowed keys exist
     for (const field_key in schema) {
       const first_key = field_key;
       const rules = schema[first_key];
       for (const key in rules) {
         if (!(key in allowed_keys)) {
           this.report_error(
-            `Schema Build Error: Property: ${key} is illegal option for schema build.`
+            `Schema Build Error: Property ${key} is illegal option for schema build.`
           );
         }
       }
     }
+    //validates no keys in options are assigned the wrong type.
     for (const field_key in schema) {
       const rules = schema[field_key];
       for (const key in rules) {
         if (typeof rules[key] !== allowed_keys[key]) {
           this.report_error(
-            `Schema Build Error: Property ${key} expected type ${allowed_keys[key]} and recieved type ${typeof rules[key]}`
+            `Schema Build Error: Property ${key} expected type: ${
+              allowed_keys[key]
+            } and recieved type: ${typeof rules[key]}`
           );
+        }
+      }
+    }
+    //validates illogical schema's are not created (multiple types, higher min than max);
+    let isTypeAssigned: number = 0;
+    for (const field_key in schema) {
+      const rules = schema[field_key];
+      for (const key in rules) {
+        if (key !== "required" && key !== "min" && key !== "max") {
+          if (rules[key] === true && isTypeAssigned === 0) {
+            isTypeAssigned++;
+          } else if (rules[key] === true && isTypeAssigned > 0) {
+            this.report_error(
+              `Schema Build Error: Cannot assign multiple types. Re-read code and validate only one type per field is assigned.`
+            );
+          }
+        } else {
+          if ("min" in rules && "max" in rules) {
+            const minV = rules["min"];
+            const maxV = rules["max"];
+            if (minV > maxV) {
+              this.report_error(
+                `Schema Build Error: Illogical min and max constraints applied.`
+              );
+            }
+          } else if ("min" in rules) {
+            if (rules["min"] < 0) {
+              this.report_error(
+                `Schema Build Error: Illogical min constraint applied.`
+              );
+            }
+          } else if ("max" in rules) {
+            if (rules["max"] === Infinity) {
+              this.report_error(
+                `Schema Build Error: Illogical max constraint applied.`
+              );
+            }
+          }
         }
       }
     }
