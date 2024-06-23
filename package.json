@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "commonjs",
   "directories": {
     "doc": "docs"
   },
@@ -10,7 +11,9 @@
     "compile": "javac src/lexer/*.java src/parser/*.java src/nodes/functionNodes/*.java",
     "read": "cd src && java lexer/Lexer",
     "java": "cd script && node index.js && npm run compile && npm run read",
-    "js": "cd source-code && npx ts-node source.ts"
+    "t": "cd src.v3 && npx tsc index.ts",
+    "js": "npm run t && cd source-code && node source.js",
+    "ts": "cd source-code && node source.ts"
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,4 @@
+// const {Schema} = require("../src.v3/index");
 import { Schema } from "../src.v3/index";
 
 const schema = new Schema();
