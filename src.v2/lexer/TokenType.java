@@ -1,0 +1,7 @@
+public enum TokenType {
+    FUNCTION_KEYWORD,
+    FUNCTION_IDENTIFIER,
+    FUNCTION_DEFINITION,
+
+    RETURN_STATEMENT,
+}
