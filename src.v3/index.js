@@ -46,8 +46,8 @@ var Schema = /** @class */ (function () {
             }
         }
         //validates illogical schema's are not created (multiple types, higher min than max);
-        var isTypeAssigned = 0;
         for (var field_key in schema) {
+            var isTypeAssigned = 0;
             var rules = schema[field_key];
             for (var key in rules) {
                 if (key !== "required" && key !== "min" && key !== "max") {
@@ -79,6 +79,13 @@ var Schema = /** @class */ (function () {
                 }
             }
         }
+        //setting defaults if required doesnt exist, its set as false
+        for (var key in schema) {
+            var curr_key = schema[key];
+            if (!("required" in curr_key)) {
+                curr_key["required"] = false;
+            }
+        }
         this.schema = schema;
     };
     Schema.prototype.read_schema = function () {
@@ -86,11 +93,23 @@ var Schema = /** @class */ (function () {
     };
     // gotta figure out return value
     Schema.prototype.validate = function (inputs) {
-        var input_keys = Object.keys(inputs);
-        var expected_keys = [];
+        for (var key in inputs) {
+            if (!(key in this.schema)) {
+                this.report_error("Schema Validation Error: Unexpected key ".concat(key, " in input."));
+            }
+        }
+        //this scans schema to see what to expect that is required
+        var required_keys = {};
         for (var key in this.schema) {
-            if (this.schema[key].required === true) {
-                expected_keys.push(key);
+            var rules = this.schema[key];
+            if ("required" in rules === true) {
+                required_keys[key] = "";
+            }
+        }
+        //validates whether or not all the required keys are present
+        for (var key in required_keys) {
+            if (!(key in inputs)) {
+                this.report_error("Schema Validation Error: Expected Key: ".concat(key, " in input."));
             }
         }
         //todo compare input keys and expected keys

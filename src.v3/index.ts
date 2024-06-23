@@ -57,8 +57,8 @@ export class Schema {
       }
     }
     //validates illogical schema's are not created (multiple types, higher min than max);
-    let isTypeAssigned: number = 0;
     for (const field_key in schema) {
+      let isTypeAssigned: number = 0;
       const rules = schema[field_key];
       for (const key in rules) {
         if (key !== "required" && key !== "min" && key !== "max") {
@@ -94,6 +94,13 @@ export class Schema {
         }
       }
     }
+    //setting defaults if required doesnt exist, its set as false
+    for (const key in schema) {
+      const curr_key = schema[key];
+      if (!("required" in curr_key)) {
+        curr_key["required"] = false;
+      }
+    }
     this.schema = schema;
   }
   public read_schema(): Record<string, options> {
@@ -101,12 +108,26 @@ export class Schema {
   }
   // gotta figure out return value
   public validate(inputs: Record<string, string | boolean | number>) {
-    const input_keys = Object.keys(inputs);
-    const expected_keys = [];
-    for (const key in this.schema) {
-      if (this.schema[key].required === true) {
-        expected_keys.push(key);
+    for (const key in inputs) {
+      if (!(key in this.schema)) {
+        this.report_error(
+          `Schema Validation Error: Unexpected key ${key} in input.`
+        );
       }
+    }
+    //this scans schema to see what to expect that is required
+    const required_keys = {};
+    for (const key in this.schema) {
+      const rules = this.schema[key];
+      if ("required" in rules === true) {
+        required_keys[key] = "";
+      }
+    }
+    //validates whether or not all the required keys are present
+    for (const key in required_keys) {
+        if (!(key in inputs)) {
+            this.report_error(`Schema Validation Error: Expected Key: ${key} in input.`);
+        }
     }
     //todo compare input keys and expected keys
   }
