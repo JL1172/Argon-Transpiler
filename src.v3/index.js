@@ -112,6 +112,19 @@ var Schema = /** @class */ (function () {
                 this.report_error("Schema Validation Error: Expected Key: ".concat(key, " in input."));
             }
         }
+        //type checking
+        for (var key in this.schema) {
+            var expected_type = Object.entries(this.schema[key]).filter(function (n) {
+                return n[0] !== "required" &&
+                    n[0] !== "min" &&
+                    n[0] !== "max" &&
+                    n[1] === true;
+            })[0];
+            var value = inputs[key];
+            if (typeof value !== expected_type[0]) {
+                this.report_error("Schema Validation Error. Improper type for key ".concat(key, ", expected: ").concat(expected_type[0]));
+            }
+        }
         //todo compare input keys and expected keys
     };
     return Schema;

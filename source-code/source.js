@@ -7,5 +7,5 @@ schema.build({
   last_name: { string: true, min: 3 },
 });
 console.log(schema.read_schema());
-const input = {last_name: "jsldkf"};
+const input = {last_name: "jsldkf", first_name: true};
 schema.validate(input);

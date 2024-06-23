@@ -125,9 +125,30 @@ export class Schema {
     }
     //validates whether or not all the required keys are present
     for (const key in required_keys) {
-        if (!(key in inputs)) {
-            this.report_error(`Schema Validation Error: Expected Key: ${key} in input.`);
-        }
+      if (!(key in inputs)) {
+        this.report_error(
+          `Schema Validation Error: Expected Key: ${key} in input.`
+        );
+      }
+    }
+
+    //type checking
+    for (const key in this.schema) {
+      const expected_type: [string, boolean | number] = Object.entries(
+        this.schema[key]
+      ).filter(
+        (n) =>
+          n[0] !== "required" &&
+          n[0] !== "min" &&
+          n[0] !== "max" &&
+          n[1] === true
+      )[0];
+      const value = inputs[key];
+      if (typeof value !== expected_type[0]) {
+        this.report_error(
+          `Schema Validation Error. Improper type for key ${key}, expected: ${expected_type[0]}`
+        );
+      }
     }
     //todo compare input keys and expected keys
   }
