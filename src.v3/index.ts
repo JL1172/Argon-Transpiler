@@ -31,19 +31,25 @@ export class Schema {
       password: "boolean",
       email: "boolean",
     };
-    for (const key in schema) {
-      if (!(key in allowed_keys)) {
-        this.report_error(
-          `Schema Build Error: Property: ${key} is illegal option for schema build.`
-        );
+    for (const field_key in schema) {
+      const first_key = field_key;
+      const rules = schema[first_key];
+      for (const key in rules) {
+        if (!(key in allowed_keys)) {
+          this.report_error(
+            `Schema Build Error: Property: ${key} is illegal option for schema build.`
+          );
+        }
       }
     }
-    for (const key in schema) {
-      const value = schema[key];
-      if (typeof value !== allowed_keys[key]) {
-        this.report_error(
-          `Schema Build Error: Property: ${key} expected type ${allowed_keys[key]} and recieved ${value}`
-        );
+    for (const field_key in schema) {
+      const rules = schema[field_key];
+      for (const key in rules) {
+        if (typeof rules[key] !== allowed_keys[key]) {
+          this.report_error(
+            `Schema Build Error: Property ${key} expected type ${allowed_keys[key]} and recieved type ${typeof rules[key]}`
+          );
+        }
       }
     }
     this.schema = schema;

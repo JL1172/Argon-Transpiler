@@ -26,15 +26,21 @@ var Schema = /** @class */ (function () {
             password: "boolean",
             email: "boolean",
         };
-        for (var key in schema) {
-            if (!(key in allowed_keys)) {
-                this.report_error("Schema Build Error: Property: ".concat(key, " is illegal option for schema build."));
+        for (var field_key in schema) {
+            var first_key = field_key;
+            var rules = schema[first_key];
+            for (var key in rules) {
+                if (!(key in allowed_keys)) {
+                    this.report_error("Schema Build Error: Property: ".concat(key, " is illegal option for schema build."));
+                }
             }
         }
-        for (var key in schema) {
-            var value = schema[key];
-            if (typeof value !== allowed_keys[key]) {
-                this.report_error("Schema Build Error: Property: ".concat(key, " expected type ").concat(allowed_keys[key], " and recieved ").concat(value));
+        for (var field_key in schema) {
+            var rules = schema[field_key];
+            for (var key in rules) {
+                if (typeof rules[key] !== allowed_keys[key]) {
+                    this.report_error("Schema Build Error: Property: ".concat(key, " expected type ").concat(allowed_keys[key], " and recieved ").concat(typeof rules[key]));
+                }
             }
         }
         this.schema = schema;
