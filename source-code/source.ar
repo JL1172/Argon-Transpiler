@@ -1,4 +1,3 @@
-
 @sanityFunc<void | int | bool>(int, str);
 function sanityFunc(age, name) {
     console.log(age);

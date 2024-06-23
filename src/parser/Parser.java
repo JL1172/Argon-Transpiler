@@ -8,11 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.lang.model.type.NullType;
 
 import lexer.Token;
 import lexer.TokenType;
@@ -174,8 +169,7 @@ public class Parser {
             this.reportError(String.format("Syntax Error. Expected Token '(' Recieved Token %s",
                     falseSixthToken.getTokenType()));
         }
-        functionReferences.add(new FuncDefNode(funcName, funcReturnTypes, funcParamTypes));
-
+        
         FuncDefToken falseSeventhToken = funcDefTokens.get(functionDefinitionIndex);
         if (falseSeventhToken.getTokenType() != FuncDefTokenType.RPAREN) {
             this.reportError(String.format("Syntax Error. Expected Token ';' Recieved Token %s",
@@ -192,7 +186,14 @@ public class Parser {
         }
         currentIdx++;
         currToken = this.peek();
+        //todo add identifier parser for prefacing function definition name if it doesnt match with the function
         this.expect(TokenType.IDENTIFIER);
+        System.out.println(currToken.getTokenValue());
+        String funcDefinitionName = functionReferences.get(0).getId();
+        if (!funcDefinitionName.equals(currToken.getTokenValue())) {
+            this.reportError(String.format("Compile Error: function definition: '%s' is not linked to a function. Check for mispelling.", funcDefinitionName));
+        }
+        System.out.println(funcDefinitionName);
         currentIdx++;
         currToken = this.peek();
         this.expect(TokenType.LPAREN);
