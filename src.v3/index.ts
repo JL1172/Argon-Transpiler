@@ -141,6 +141,8 @@ export class Schema {
           n[0] !== "required" &&
           n[0] !== "min" &&
           n[0] !== "max" &&
+          n[0] !== "email" && 
+          n[0] !== "password" &&
           n[1] === true
       )[0];
       const value = inputs[key];
@@ -150,6 +152,6 @@ export class Schema {
         );
       }
     }
-    //todo compare input keys and expected keys
+    
   }
 }
